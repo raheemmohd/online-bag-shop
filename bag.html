@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Bag Shop</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Online Bag Shop</h1>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#cart">Cart (<span id="cart-count">0</span>)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="products">
+        <h2>Our Bags Collection</h2>
+        <div class="product" data-name="Luggage Bag" data-price="50">
+            <h3>Luggage Bag</h3>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        <div class="product" data-name="School Bag" data-price="30">
+            <h3>School Bag</h3>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        <div class="product" data-name="Tiffin Bag" data-price="20">
+            <h3>Tiffin Bag</h3>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+        <div class="product" data-name="Hand Bag" data-price="40">
+            <h3>Hand Bag</h3>
+            <button class="add-to-cart">Add to Cart</button>
+        </div>
+    </section>
+
+    <section id="cart">
+        <h2>Shopping Cart</h2>
+        <ul id="cart-items"></ul>
+        <p>Total: $<span id="cart-total">0</span></p>
+        <button id="whatsapp-order" style="display: none;">Place Order on WhatsApp</button>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let cart = [];
+            
+            function updateCart() {
+                let cartItems = document.getElementById("cart-items");
+                let cartTotal = document.getElementById("cart-total");
+                let cartCount = document.getElementById("cart-count");
+                let whatsappButton = document.getElementById("whatsapp-order");
+                
+                cartItems.innerHTML = "";
+                let total = 0;
+                cart.forEach((item, index) => {
+                    let li = document.createElement("li");
+                    li.textContent = `${item.name} - $${item.price}`;
+                    
+                    let removeBtn = document.createElement("button");
+                    removeBtn.textContent = "Remove";
+                    removeBtn.addEventListener("click", function () {
+                        cart.splice(index, 1);
+                        updateCart();
+                    });
+
+                    li.appendChild(removeBtn);
+                    cartItems.appendChild(li);
+                    total += item.price;
+                });
+
+                cartTotal.textContent = total;
+                cartCount.textContent = cart.length;
+
+                whatsappButton.style.display = cart.length > 0 ? "block" : "none"; 
+            }
+
+            document.querySelectorAll(".add-to-cart").forEach(button => {
+                button.addEventListener("click", function () {
+                    let name = this.getAttribute("data-name");
+                    let price = parseFloat(this.getAttribute("data-price"));
+                    
+                    cart.push({ name, price });
+                    updateCart();
+                });
+            });
+
+            document.getElementById("whatsapp-order").addEventListener("click", function () {
+                let message = "Hello, I would like to order:\n";
+                cart.forEach(item => {
+                    message += `${item.name} - $${item.price}\n`;
+                });
+                message += `Total: $${document.getElementById("cart-total").textContent}`;
+
+                let phoneNumber = "1234567890";
+                let whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, "_blank");
+            });
+        });
+    </script>
+</body>
+</html>
